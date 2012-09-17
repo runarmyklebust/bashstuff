@@ -186,7 +186,6 @@ export CLICOLOR=true
 export LSCOLORS=${LSCOLORS:-ExFxCxDxBxegedabagacad}
 
 # Prompt
-
         RED="\[\033[0;31m\]"
      YELLOW="\[\033[0;33m\]"
       GREEN="\[\033[0;32m\]"
@@ -197,9 +196,7 @@ LIGHT_GREEN="\[\033[1;32m\]"
  LIGHT_GRAY="\[\033[0;37m\]"
  COLOR_NONE="\[\e[0m\]"
 
-#PS1="\e[0;34m\\u[\w]:\[\e[m\] "
-#export PS1='\[\e[$((32-${?}))m\]\w\[\e[0m\]$(parse_git_branch) \$ '
-#PS1='\[\033[0;37m\][\[\033[0;31m\]\u@\h\[\033[0;33m\]`parse_git_svn_revision`\[\033[0;32m\]\W\[\033[0;37m\]]\$ '
+PROMPT_COMMAND=set_bash_prompt
 
 # Override cd to check for localevn. 
 # Is exists, source it => Use this to create separate env for different dirs, e.g CVS_ROOT, JAVA_HOME etc
@@ -328,5 +325,3 @@ complete -F _set_intellij_context-TC set_intellij_context.sh
 complete -F _set_blobstore-TC set_blobstore.sh
 complete -F _set_config-TC set_config.sh
 complete -F _set_plugin-TC set_plugins.sh
-
-PROMPT_COMMAND=set_bash_prompt
