@@ -35,8 +35,8 @@ export TRUNK4_4="$WORKSPACE_ENONIC/git/4.4"
 export TRUNK4_2="$WORKSPACE_ENONIC/4.2"
 export TRUNK4_5="$WORKSPACE_ENONIC/git/4.5"
 export TRUNK4_6="$WORKSPACE_ENONIC/git/4.6"
-export TRUNK_CE="$WORKSPACE_ENONIC/git/4.7ee"
-export TRUNK_BRANCH="$WORKSPACE_ENONIC/4.7ee"
+export TRUNK_CE="$WORKSPACE_ENONIC/git/4.7-ee"
+export TRUNK_BRANCH="$WORKSPACE_ENONIC/4.7-ee"
 
 # Java
 # export JAVA_OPTS="-Xbootclasspath/p:$CATALINA_HOME/lib/xalan-2.7.0.jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m"
@@ -186,17 +186,8 @@ export CLICOLOR=true
 export LSCOLORS=${LSCOLORS:-ExFxCxDxBxegedabagacad}
 
 # Prompt
-        RED="\[\033[0;31m\]"
-     YELLOW="\[\033[0;33m\]"
-      GREEN="\[\033[0;32m\]"
-       BLUE="\[\033[0;34m\]"
-  LIGHT_RED="\[\033[1;31m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-      WHITE="\[\033[1;37m\]"
- LIGHT_GRAY="\[\033[0;37m\]"
- COLOR_NONE="\[\e[0m\]"
-
-PROMPT_COMMAND=set_bash_prompt
+#PS1="\e[0;34m\\u[\w]:\[\e[m\] "
+export PS1='\[\e[$((32-${?}))m\]\w\[\e[0m\] \$ '
 
 # Override cd to check for localevn. 
 # Is exists, source it => Use this to create separate env for different dirs, e.g CVS_ROOT, JAVA_HOME etc
@@ -259,66 +250,6 @@ _set_plugin-TC() {
     cur=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/plugins)' $cur ) )
 }
-
-# Detect whether the current directory is a git repository.
-function is_git_repository {
-  git branch > /dev/null 2>&1
-}
-
-function set_git_branch {
-  # Capture the output of the "git status" command.
-  git_status="$(git status 2> /dev/null)"
-
-  # Set color based on clean/staged/dirty.
-  if [[ ${git_status} =~ "working directory clean" ]]; then
-	state="${BLUE}"
-  elif [[ ${git_status} =~ "Changes to be committed" ]]; then
-	state="${RED}"
-	elif [[ ${git_status} =~ "no changes added to commit" ]]; then
-	state="${YELLOW}"	
-  else
-	state="${RED}"
-  fi
-  
-  # Set arrow icon based on status against remote.
-  remote_pattern="# Your branch is (.*) of"
-  if [[ ${git_status} =~ ${remote_pattern} ]]; then
-if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
-remote="↑"
-    else
-remote="↓"
-    fi
-else
-remote=""
-  fi
-diverge_pattern="# Your branch and (.*) have diverged"
-  if [[ ${git_status} =~ ${diverge_pattern} ]]; then
-remote="↕"
-  fi
-  
-  # Get the name of the branch.
-  branch_pattern="^# On branch ([^${IFS}]*)"
-  if [[ ${git_status} =~ ${branch_pattern} ]]; then
-branch=${BASH_REMATCH[1]}
-  fi
-
-  # Set the final branch string.
-  BRANCH="${state}[${branch}]${remote}${COLOR_NONE} "
-}
-
-function set_bash_prompt () {
-
-  # Set the BRANCH variable.
-  if is_git_repository ; then
-	set_git_branch
-  else
-	BRANCH=' '
-  fi
-  
-  # Set the bash prompt variable.
-  PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
-}
-
 
 # Bindings
 complete -F _set_intellij_context-TC set_intellij_context.sh
