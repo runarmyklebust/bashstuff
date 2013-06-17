@@ -320,6 +320,21 @@ _set_resource-TC() {
     COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/resources)' $cur ) )
 }
 
+# PROMPT STUFF
+########################
+
+## Enables executing .dirrc file if present in directory
+function _execute_dirrc() {
+	if [ "${PREV}" != "$(pwd -P)" ]; then
+	    if [ -r .dirrc ]; then
+	        . ./.dirrc
+	    fi
+	    PREV=$(pwd -P)
+	fi
+}
+
+# GIT Aware prompt
+########################
 
 # Detect whether the current directory is a git repository.
 function is_git_repository {
@@ -367,7 +382,7 @@ branch=${BASH_REMATCH[1]}
   BRANCH="${state}[${branch}]${remote}${COLOR_NONE} "
 }
 
-function set_bash_prompt () {
+function set_git_enabled_prompt () {
 
   # Set the BRANCH variable.
   if is_git_repository ; then
@@ -380,7 +395,7 @@ function set_bash_prompt () {
   PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
 }
 
-# Bindings
+# Bind custom tab-completions
 complete -F _set_intellij_context-TC set_intellij_context.sh
 complete -F _set_blobstore-TC set_blobstore.sh
 complete -F _set_config-TC set_config.sh
@@ -395,5 +410,7 @@ complete -F _set_plugin-TC 2set_plugins.sh
 complete -F _set_index-TC 2set_index.sh
 complete -F _set_resource-TC 2set_resources.sh
 
-PROMPT_COMMAND=set_bash_prompt
+# Bind prompt-commands
+PROMPT_COMMAND="set_git_enabled_prompt"
 export PROMPT_COMMAND="_bash_history_sync; $PROMPT_COMMAND"
+export PROMPT_COMMAND="_execute_dirrc; $PROMPT_COMMAND"
