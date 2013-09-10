@@ -1,25 +1,32 @@
 # #### Runars .bashrc - MACenabled#####
 #
 
+########################
 # Bash history tweaks
+########################
 
+# Set larger history
 HISTSIZE=9000
 HISTFILESIZE=$HISTSIZE
+
+# Ignore duplicates and commands with leading spaces
 HISTCONTROL=ignorespace:ignoredups
+
+# Appended to the histfile instead of overwriting on exit
 shopt -s histappend
 
-history() {
-  _bash_history_sync
-  builtin history "$@"
-}
+#history() {
+#  _bash_history_sync
+#  builtin history "$@"
+#}
 
 _bash_history_sync() {
-  builtin history -a         #1
-  HISTFILESIZE=$HISTSIZE     #2
-  #builtin history -c         #3
-  #builtin history -r         #4
+  # Append this session to history
+  builtin history -a
+  HISTFILESIZE=$HISTSIZE     
 }
 
+export PROMPT_COMMAND="_bash_history_sync; $PROMPT_COMMAND"
 
 # ENV
 export WORKSPACE=~/Dev/Workspace
@@ -59,6 +66,7 @@ export TRUNK4_6="$WORKSPACE_ENONIC/git/4.6"
 export TRUNK_CE="$WORKSPACE_ENONIC/git/WEM"
 export TRUNK_BRANCH="$WORKSPACE_ENONIC/WEM"
 export JBOSS_HOME=/Applications/EnterprisePlatform-5.1.2/jboss-eap-5.1/jboss-as 
+export GIT_REPO="$WORKSPACE_ENONIC/git"
 
 # Java
 # export JAVA_OPTS="-Xbootclasspath/p:$CATALINA_HOME/lib/xalan-2.7.0.jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m"
@@ -191,11 +199,10 @@ up() {
 	fi
 
 	SEARCHPATH=$PWD
-
+	
+	# If argument is not numeric, try match path
 	if ! [[ "$LIMIT" =~ ^[0-9]+$ ]] ; then
-	  # exec >&2; echo "error: Not a number"; exit 1
-
-		if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
+	 	if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
 			echo "expression not found"
 		else
 			while [ true ]; do 
@@ -209,10 +216,9 @@ up() {
 			done
 		fi
 	else 
-		echo "upping $LIMIT dirs"
+		# go n directories up
 		for ((i=1; i <= LIMIT; i++))
 			do
-				echo "upping to $SEARCHPATH"
 				SEARCHPATH=$SEARCHPATH/..
 			done
 		cd $SEARCHPATH
@@ -253,6 +259,22 @@ cd() {
   [ -f localenv ] && colorString setting localenv.. && source localenv
 }
 
+# Function to quick cd to git repositories, uses _set_gitrepository-TC
+cg() {
+	builtin cd $GIT_REPO/$1
+}
+
+# Function to checkout branches, uses _set_listbranches-TC
+branch() {
+    git checkout $1
+}
+
+# Get branches and remove * to not fuck up TabCompletion
+getBranches() {
+	BRANCHES=$(git branch | sed 's/*//')
+	echo $BRANCHES
+}
+
 # tunneling
 
 alias tunnel_prod_db="ssh -L 54321:icarus:5432 rmy@beast.enonic.net"
@@ -269,8 +291,6 @@ alias tail_enonic_46="acoc ssh root@vtnode2 tail -100f /home/cms-46-elasticsearc
 alias tail_ssb='acoc ssh root@vtnode2 tail -100f /home/cms-46-elasticsearch-ssb/enonic-cms/logs/catalina.log'
 alias go_versiontest="ssh root@versiontest"
 alias go_testprod="ssh root@testprod"
-alias go_ansatt="ssh rmy@ansatt.enonic.com"
-alias go_beast="ssh rmy@beast.enonic.net"
 alias go_prod="go_beast"
 alias go_testdb="ssh root@testdb"
 alias go_vtnode1="ssh root@vtnode1"
@@ -319,6 +339,35 @@ _set_resource-TC() {
     cur=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/resources)' $cur ) )
 }
+
+_set_gitrepository-TC() {
+	local cur
+	cur=${COMP_WORDS[COMP_CWORD]}
+	COMPREPLY=( $( compgen -W '$( ls $GIT_REPO)' $cur ))
+}
+
+_set_listbranches-TC() {
+	local cur
+	cur=${COMP_WORDS[COMP_CWORD]}
+	COMPREPLY=( $( compgen -W '$( getBranches)' $cur ))
+}
+
+# Bind custom tab-completions
+complete -F _set_intellij_context-TC set_intellij_context.sh
+complete -F _set_blobstore-TC set_blobstore.sh
+complete -F _set_config-TC set_config.sh
+complete -F _set_plugin-TC set_plugins.sh
+complete -F _set_index-TC set_index.sh
+complete -F _set_resource-TC set_resources.sh
+complete -F _set_gitrepository-TC cg
+complete -F _set_listbranches-TC branch
+
+complete -F _set_intellij_context-TC 2set_intellij_context.sh
+complete -F _set_blobstore-TC 2set_blobstore.sh
+complete -F _set_config-TC 2set_config.sh
+complete -F _set_plugin-TC 2set_plugins.sh
+complete -F _set_index-TC 2set_index.sh
+complete -F _set_resource-TC 2set_resources.sh
 
 # PROMPT STUFF
 ########################
@@ -395,22 +444,6 @@ function set_git_enabled_prompt () {
   PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
 }
 
-# Bind custom tab-completions
-complete -F _set_intellij_context-TC set_intellij_context.sh
-complete -F _set_blobstore-TC set_blobstore.sh
-complete -F _set_config-TC set_config.sh
-complete -F _set_plugin-TC set_plugins.sh
-complete -F _set_index-TC set_index.sh
-complete -F _set_resource-TC set_resources.sh
-
-complete -F _set_intellij_context-TC 2set_intellij_context.sh
-complete -F _set_blobstore-TC 2set_blobstore.sh
-complete -F _set_config-TC 2set_config.sh
-complete -F _set_plugin-TC 2set_plugins.sh
-complete -F _set_index-TC 2set_index.sh
-complete -F _set_resource-TC 2set_resources.sh
-
 # Bind prompt-commands
-PROMPT_COMMAND="set_git_enabled_prompt"
-export PROMPT_COMMAND="_bash_history_sync; $PROMPT_COMMAND"
-export PROMPT_COMMAND="_execute_dirrc; $PROMPT_COMMAND"
+export PROMPT_COMMAND="set_git_enabled_prompt; $PROMPT_COMMAND"
+#export PROMPT_COMMAND="_execute_dirrc; $PROMPT_COMMAND"
