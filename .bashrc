@@ -20,39 +20,23 @@ shopt -s histappend
 #  builtin history "$@"
 #}
 
-_bash_history_sync() {
-  # Append this session to history
-  builtin history -a
-  HISTFILESIZE=$HISTSIZE     
-}
-
-export PROMPT_COMMAND="_bash_history_sync; $PROMPT_COMMAND"
-
 # ENV
 export WORKSPACE=~/Dev/Workspace
 export JAVA_WS=$WORKSPACE/Java
 export DB_WS=$WORKSPACE/DB
 export APP_WS=$WORKSPACE/apps
 export WORKSPACE_ENONIC=$JAVA_WS/Enonic
-
-# Apps
 export CATALINA_HOME=$APP_WS/tomcat
 export INTELLIJ_CATALINA=$APP_WS/tomcat
 #export GLASSFISH_HOME=$APP_WS/glassfish
 export GRINDER_HOME=$WORKSPACE/Java/grinder-3.2
 export GRADLE_HOME=/opt/local/share/java/gradle/bin/gradle
 export GRADLE_OPTS="-Dorg.gradle.daemon=true"
-
-# Java Version
 #export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5/Home/
-export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
-
-# DBs
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 export MYSQL_HOME=/user/local/mysql
-
-# Maven
-# Set max heap = 384M
 export MAVEN_OPTS="-Xmx1G -XX:MaxPermSize=512m"
+export DYLD_LIBRARY_PATH="/Applications/YourKit_Java_Profiler_12.0.5.app/bin/mac"
 
 # CMS Stuff
 #export CMS_HOME="$CATALINA_HOME/cms.home"
@@ -75,47 +59,27 @@ export GIT_REPO="$WORKSPACE_ENONIC/git"
 #export PATH=$APP_WS/maven/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=~/bin:$PATH
-#export PATH=$MYSQL_HOME/bin:$PATH
 export PATH=$CATALINA_HOME/bin:$PATH
 export PATH=$GROOVY_HOME/bin:$PATH
-#export PATH=$GLASSFISH_HOME/bin:$PATH
 export PATH=~/bin/dbtool:$PATH
-#export PATH=$APP_WS/OpenDS/bin:$PATH
-#export PATH=/Applications/IzPack/utils/wrappers:$PATH
-#export PATH=~/Dev/Workspace/apps/launch4j:$PATH
-#export PATH=$PATH:$JBOSS_HOME/bin
+export PATH=/Users/rmy/Dev/Workspace/apps/android-sdk-macosx/tools:$PATH
+export PATH=/Users/rmy/Dev/Workspace/apps/android-sdk-macosx/platform-tools:$PATH
 
-# Node js stuff
+#JMETER
+export PATH="/Users/rmy/Dev/Workspace/apps/jmeter/bin/":$PATH
+
+#Node js stuff
 export NODE_PATH="/Users/rmy/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules"
 export PATH=/Users/rmy/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules/.bin:$PATH
-export PATH=/usr/local/share/npm/bin/:$PATH
+export PATH=/usr/local/share/npm/bin:$PATH
 
-# ACOC Stuff
-# Config i ~/.acoc.conf
-#
-# PS: acoc i ~/bin brukes, dette er en modifisert utgave som støtter DYNAVAL
-#
-# Legges i toppen siden aliase's med acoc bør gjøres før senere aliase'r for de samme kommandoene ...?
-# Installation (pre-requisite is Ruby):
-#	1. Download acoc (http://www.caliban.org/ruby/acoc.shtml) and unpack into ~/bin/acoc-0.7.1
-#	2. Install Term::ANSIColor: (gem install term-ansicolor FUNKET IKKE, ikke på Mac'n ihvertfall)
-#		a) download from http://raa.ruby-lang.org/project/ansicolor/
-#		b) untar and run from dir: ruby install.rb
-# 	3. Install Masahiro Tomita's Ruby/TPty library (recommeneded, but not required):
-#		a) download from http://raa.ruby-lang.org/project/ruby-tpty/
-#		b) untar and run from dir: ruby extconf.rb && make install
-#	4. Install from ~/bin/acoc-0.7.1: make install
-#		a) legges til /usr/local/bin/acoc
-#		b) hvis den ikke bruker default Ruby versjon (f.eks /usr/bin/ruby), endre #! i toppen av scriptet (eks fra /usr/bin/ruby til /usr/local/bin/ruby)
-#
-# if acoc found as command in path, make these aliases
 if [ $(type -t acoc) ];then
 	echo "Aliasing with acoc..."
 	alias ping="acoc ping -c 5"
 	alias df="acoc df"
 	alias traceroute="acoc traceroute"
-    alias svn="acoc svn"
-    alias mvn="acoc mvn"
+   alias svn="acoc svn"
+  alias mvn="acoc mvn"
 	alias curl="acoc curl"
     # gnu diff options:
     #   -w (--ignore-all-space)
@@ -129,9 +93,10 @@ if [ $(type -t acoc) ];then
     alias cat='acoc cat'
     #alias acoc-refresh="cp -f $(cygpath --unix $CYGWIN_USERHOME_SRC)/.acoc.conf ~/"
 
+
     function colorString() {
         usage="Usage: colorString [-c acoc_color] string..."
-        # Håndter -c opsjonen for å angi acoc farge
+       # Håndter -c opsjonen for å angi acoc farge
         if [ "$1" == -c ]; then
             export DYNAVAL_COL=${2:?$usage}
             shift 2
@@ -144,6 +109,8 @@ if [ $(type -t acoc) ];then
         # remove var to avoid trouble
         unset DYNAVAL DYNAVAL_COL
     }
+fi
+
     function colorMe() {
         arg1=${1:?Må spesifisere en string som skal fargelegges}
         export DYNAVAL="$@"
@@ -151,19 +118,15 @@ if [ $(type -t acoc) ];then
         acoc bash --login -i
         unset DYNAVAL
     }
-else
-    # Define acoc functions so everything works when acoc is not installed
-    function colorString() {
-        if [ "$1" == -c ]; then
-            shift 2
-        fi
-        echo $@
+
+    function setTab() {
+	printf "\e]1;$1\a"
     }
-fi
 
 # Aliases
 alias ll="ls -la"
-alias cw="cd $WORKSPACE"
+alias cc="cd ~/Dev/Workspace/apps/wem-distro/distro"
+alias cw="cd $GIT_REPO/WEM"
 alias cj="cd $JAVA_WS"
 alias ce="cd $WORKSPACE_ENONIC"
 alias cm="cd $WORKSPACE_ENONIC/cms-trunk"
@@ -191,39 +154,39 @@ alias conf="cd ~/bin/configs"
 alias cp="cp -R"
 alias pull="git pull --rebase"
 
-up() {
-	LIMIT=$1
-
-	if [ -z "$LIMIT" ]; then
-		LIMIT=1
-	fi
-
-	SEARCHPATH=$PWD
-	
-	# If argument is not numeric, try match path
-	if ! [[ "$LIMIT" =~ ^[0-9]+$ ]] ; then
-	 	if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
-			echo "expression not found"
-		else
-			while [ true ]; do 
-				SEARCHPATH=$SEARCHPATH/..
-				cd $SEARCHPATH
-				if [[ ${PWD##*/} =~ ^.*$LIMIT.*$ ]]; then
-					break;
-				elif [[ -z ${PWD##*/} ]]; then
-					break;
-				fi 
-			done
-		fi
-	else 
-		# go n directories up
-		for ((i=1; i <= LIMIT; i++))
-			do
-				SEARCHPATH=$SEARCHPATH/..
-			done
-		cd $SEARCHPATH
-	fi
-}
+#up() {
+#	LIMIT=$1
+#
+#	if [ -z "$LIMIT" ]; then
+#		LIMIT=1
+#	fi
+#
+#	SEARCHPATH=$PWD
+#	
+#	# If argument is not numeric, try match path
+#	if ! [[ "$LIMIT" =~ ^[0-9]+$ ]] ; then
+#	 	if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
+#			echo "expression not found"
+#		else
+#			while [ true ]; do 
+#				SEARCHPATH=$SEARCHPATH/..
+#				cd $SEARCHPATH
+#				if [[ ${PWD##*/} =~ ^.*$LIMIT.*$ ]]; then
+#					break;
+#				elif [[ -z ${PWD##*/} ]]; then
+#					break;
+#				fi 
+#			done
+#		fi
+#	else 
+#		# go n directories up
+#		for ((i=1; i <= LIMIT; i++))
+#			do
+#				SEARCHPATH=$SEARCHPATH/..
+#			done
+#		cd $SEARCHPATH
+#	fi
+#}
 
 # GLASSFISH ALIASES
 alias as_start="asadmin start-domain domain1"
@@ -291,6 +254,8 @@ alias tail_enonic_46="acoc ssh root@vtnode2 tail -100f /home/cms-46-elasticsearc
 alias tail_ssb='acoc ssh root@vtnode2 tail -100f /home/cms-46-elasticsearch-ssb/enonic-cms/logs/catalina.log'
 alias go_versiontest="ssh root@versiontest"
 alias go_testprod="ssh root@testprod"
+alias go_ansatt="ssh rmy@ansatt.enonic.com"
+alias go_beast="ssh rmy@beast.enonic.net"
 alias go_prod="go_beast"
 alias go_testdb="ssh root@testdb"
 alias go_vtnode1="ssh root@vtnode1"
@@ -373,77 +338,118 @@ complete -F _set_resource-TC 2set_resources.sh
 ########################
 
 ## Enables executing .dirrc file if present in directory
-function _execute_dirrc() {
-	if [ "${PREV}" != "$(pwd -P)" ]; then
-	    if [ -r .dirrc ]; then
-	        . ./.dirrc
-	    fi
-	    PREV=$(pwd -P)
-	fi
-}
-
+#function _execute_dirrc() {
+#	if [ "${PREV}" != "$(pwd -P)" ]; then
+#	    if [ -r .dirrc ]; then
+#	        . ./.dirrc
+#	    fi
+#	    PREV=$(pwd -P)
+#	fi
+#}
+#
 # GIT Aware prompt
 ########################
 
 # Detect whether the current directory is a git repository.
-function is_git_repository {
-  git branch > /dev/null 2>&1
+#function is_git_repository {
+#  git branch > /dev/null 2>&1
+#}
+
+
+java7() {
+export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+}
+java8() {
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 }
 
-function set_git_branch {
-  # Capture the output of the "git status" command.
-  git_status="$(git status 2> /dev/null)"
+#function set_git_branch {
+#  # Capture the output of the "git status" command.
+#  git_status="$(git status 2> /dev/null)"
+#
+#  # Set color based on clean/staged/dirty.
+#  if [[ ${git_status} =~ "working directory clean" ]]; then
+#	state="${BLUE}"
+#  elif [[ ${git_status} =~ "Changes to be committed" ]]; then
+#	state="${RED}"
+#	elif [[ ${git_status} =~ "no changes added to commit" ]]; then
+#	state="${YELLOW}"	
+#  else
+#	state="${RED}"
+#  fi
+#  
+#  # Set arrow icon based on status against remote.
+#  remote_pattern="# Your branch is (.*) of"
+#  if [[ ${git_status} =~ ${remote_pattern} ]]; then
+#		if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
+#			remote="↑"
+#    	else
+#			remote="↓"
+#    	fi
+# else
+#	remote=""
+# fi
+#
+#diverge_pattern="# Your branch and (.*) have diverged"
+#  if [[ ${git_status} =~ ${diverge_pattern} ]]; then
+#	remote="↕"
+#  fi
+#  
+#  # Get the name of the branch.
+#  branch_pattern="^# On branch ([^${IFS}]*)"
+#  if [[ ${git_status} =~ ${branch_pattern} ]]; then
+#	branch=${BASH_REMATCH[1]}
+#  fi
+#
+#  # Set the final branch string.
+#  BRANCH="${state}[${branch}]${remote}${COLOR_NONE} "
+#
+#}
 
-  # Set color based on clean/staged/dirty.
-  if [[ ${git_status} =~ "working directory clean" ]]; then
-	state="${BLUE}"
-  elif [[ ${git_status} =~ "Changes to be committed" ]]; then
-	state="${RED}"
-	elif [[ ${git_status} =~ "no changes added to commit" ]]; then
-	state="${YELLOW}"	
-  else
-	state="${RED}"
-  fi
-  
-  # Set arrow icon based on status against remote.
-  remote_pattern="# Your branch is (.*) of"
-  if [[ ${git_status} =~ ${remote_pattern} ]]; then
-if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
-remote="↑"
-    else
-remote="↓"
-    fi
-else
-remote=""
-  fi
-diverge_pattern="# Your branch and (.*) have diverged"
-  if [[ ${git_status} =~ ${diverge_pattern} ]]; then
-remote="↕"
-  fi
-  
-  # Get the name of the branch.
-  branch_pattern="^# On branch ([^${IFS}]*)"
-  if [[ ${git_status} =~ ${branch_pattern} ]]; then
-branch=${BASH_REMATCH[1]}
-  fi
+#function set_git_enabled_prompt () {
+#   
+#  # Set the BRANCH variable.
+#  if is_git_repository ; then
+#	set_git_branch
+#  else
+#	BRANCH=' '
+#  fi
+#  
+#  # Set the bash prompt variable.
+#  PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
+#}
+#
 
-  # Set the final branch string.
-  BRANCH="${state}[${branch}]${remote}${COLOR_NONE} "
+
+PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]\$ "
+
+function tabname {
+  printf "\e]1;$1\a"
 }
 
-function set_git_enabled_prompt () {
-
-  # Set the BRANCH variable.
-  if is_git_repository ; then
-	set_git_branch
-  else
-	BRANCH=' '
-  fi
-  
-  # Set the bash prompt variable.
-  PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
+function cd_set_tab() {
+	if [ -f .tab ]; then
+		TAB_NAME=$(cat .tab)
+		tabname $TAB_NAME
+	else
+		tabname $PWD
+	fi
 }
+
+function jps() {
+ 	ARGS=$1
+
+	if [ -z "$ARGS" ]; then
+		ARGS="-lvm"
+	fi
+
+	command jps $ARGS | sed -e 's/-D/\'$'\n\t-D/g' | sed -e 's/-X/\'$'\n\t-X/g'
+}
+
+#export PROMPT_COMMAND="cd_set_tab; set_git_enabled_prompt; $PROMPT_COMMAND"
+export PROMPT_COMMAND="cd_set_tab; $PROMPT_COMMAND"
+
 
 # Bind prompt-commands
-export PROMPT_COMMAND="set_git_enabled_prompt; $PROMPT_COMMAND"
+#export PROMPT_COMMAND=" $PROMPT_COMMAND"
 #export PROMPT_COMMAND="_execute_dirrc; $PROMPT_COMMAND"
