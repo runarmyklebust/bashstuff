@@ -23,34 +23,25 @@ shopt -s histappend
 # ENV
 export WORKSPACE=~/Dev/Workspace
 export JAVA_WS=$WORKSPACE/Java
-export DB_WS=$WORKSPACE/DB
-export APP_WS=$WORKSPACE/apps
-export WORKSPACE_ENONIC=$JAVA_WS/Enonic
 export CATALINA_HOME=$APP_WS/tomcat
 export INTELLIJ_CATALINA=$APP_WS/tomcat
-#export GLASSFISH_HOME=$APP_WS/glassfish
-export GRINDER_HOME=$WORKSPACE/Java/grinder-3.2
 export GRADLE_HOME=/opt/local/share/java/gradle/bin/gradle
 export GRADLE_OPTS="-Dorg.gradle.daemon=true"
-#export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5/Home/
 export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
-export MYSQL_HOME=/user/local/mysql
 export MAVEN_OPTS="-Xmx1G -XX:MaxPermSize=512m"
 export DYLD_LIBRARY_PATH="/Applications/YourKit_Java_Profiler_12.0.5.app/bin/mac"
 
 # CMS Stuff
-#export CMS_HOME="$CATALINA_HOME/cms.home"
+export WORKSPACE_ENONIC="$WORKSPACE/Java/Enonic"
 export CMS_DIST=$WORKSPACE/CMS_DIST
 export TRUNK_PLUGINS="$WORKSPACE_ENONIC/plugins"
-export TRUNK4_3="$WORKSPACE_ENONIC/4.3"
-export TRUNK4_4="$WORKSPACE_ENONIC/git/4.4"
-export TRUNK4_2="$WORKSPACE_ENONIC/4.2"
-export TRUNK4_5="$WORKSPACE_ENONIC/git/4.5"
-export TRUNK4_6="$WORKSPACE_ENONIC/git/4.6"
 export TRUNK_CE="$WORKSPACE_ENONIC/git/WEM"
 export TRUNK_BRANCH="$WORKSPACE_ENONIC/WEM"
-export JBOSS_HOME=/Applications/EnterprisePlatform-5.1.2/jboss-eap-5.1/jboss-as 
 export GIT_REPO="$WORKSPACE_ENONIC/git"
+export XP_HOME="/Users/runarmyklebust/Dev/Workspace/xp/home"
+export WEM_HOME="$XP_HOME"
+export XP_DIST="$GIT_REPO/WEM"
+
 
 # Java
 # export JAVA_OPTS="-Xbootclasspath/p:$CATALINA_HOME/lib/xalan-2.7.0.jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m"
@@ -62,15 +53,15 @@ export PATH=~/bin:$PATH
 export PATH=$CATALINA_HOME/bin:$PATH
 export PATH=$GROOVY_HOME/bin:$PATH
 export PATH=~/bin/dbtool:$PATH
-export PATH=/Users/rmy/Dev/Workspace/apps/android-sdk-macosx/tools:$PATH
-export PATH=/Users/rmy/Dev/Workspace/apps/android-sdk-macosx/platform-tools:$PATH
+export PATH=/Users/runarmyklebust/Dev/Workspace/apps/android-sdk-macosx/tools:$PATH
+export PATH=/Users/runarmyklebust/Dev/Workspace/apps/android-sdk-macosx/platform-tools:$PATH
 
 #JMETER
-export PATH="/Users/rmy/Dev/Workspace/apps/jmeter/bin/":$PATH
+export PATH="/Users/runarmyklebust/Dev/Workspace/apps/jmeter/bin/":$PATH
 
 #Node js stuff
-export NODE_PATH="/Users/rmy/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules"
-export PATH=/Users/rmy/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules/.bin:$PATH
+export NODE_PATH="/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules"
+export PATH=/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules/.bin:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
 
 if [ $(type -t acoc) ];then
@@ -78,8 +69,8 @@ if [ $(type -t acoc) ];then
 	alias ping="acoc ping -c 5"
 	alias df="acoc df"
 	alias traceroute="acoc traceroute"
-   alias svn="acoc svn"
-  alias mvn="acoc mvn"
+    alias svn="acoc svn"
+    alias mvn="acoc mvn"
 	alias curl="acoc curl"
     # gnu diff options:
     #   -w (--ignore-all-space)
@@ -125,80 +116,57 @@ fi
 
 # Aliases
 alias ll="ls -la"
-alias cc="cd ~/Dev/Workspace/apps/wem-distro/distro"
-alias cw="cd $GIT_REPO/WEM"
-alias cj="cd $JAVA_WS"
-alias ce="cd $WORKSPACE_ENONIC"
-alias cm="cd $WORKSPACE_ENONIC/cms-trunk"
-alias ch="cd ~/"w	
-alias cl="cd $JAVA_WS/LABS"
+alias cc="cd $XP_HOME"
 alias ca="cd $APP_WS"
 alias sr="sudo su -"
 alias reload="colorString -c green sourcing .bashrc && source ~/.bashrc"
-alias mysqlstart="colorString starting mySQL at $MYSQL_HOME"
 alias psjava="ps -ef | grep java"
 alias ct="cd $TRUNK_CE"
-alias cex="cd /Users/rmy/Documents/Experience_18_4_2013"
+alias cex="cd /Users/runarmyklebust/Documents/Experience_18_4_2013"
 alias cb="cd $TRUNK4_4"
 alias cd44="cd $TRUNK4_4"
-alias ci="cd $INTELLIJ_CATALINA"
-alias cjar="jar tf"
-alias xjar="jar xf"
-alias psql="/Library/PostgreSQL/8.3/bin/psql"
-alias skiptest="mvn -Dmaven.test.skip=true clean install"
 alias tunnel_beast="ssh -L 54321:icarus:5432 rmy@beast.enonic.net"
-alias tunnel_shadowcat="ssh -L 54321:shadowcat:5432 rmy@beast.enonic.net"
-alias g="gradle"
+alias tunnel_shadowcat="ssh -L 54321:shadowcat.enonic.net:5432 rmy@beast.enonic.net"
 alias editBashrc="vi ~/.bashrc;reload"
 alias conf="cd ~/bin/configs"
 alias cp="cp -R"
-alias pull="git pull --rebase"
-
-#up() {
-#	LIMIT=$1
-#
-#	if [ -z "$LIMIT" ]; then
-#		LIMIT=1
-#	fi
-#
-#	SEARCHPATH=$PWD
-#	
-#	# If argument is not numeric, try match path
-#	if ! [[ "$LIMIT" =~ ^[0-9]+$ ]] ; then
-#	 	if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
-#			echo "expression not found"
-#		else
-#			while [ true ]; do 
-#				SEARCHPATH=$SEARCHPATH/..
-#				cd $SEARCHPATH
-#				if [[ ${PWD##*/} =~ ^.*$LIMIT.*$ ]]; then
-#					break;
-#				elif [[ -z ${PWD##*/} ]]; then
-#					break;
-#				fi 
-#			done
-#		fi
-#	else 
-#		# go n directories up
-#		for ((i=1; i <= LIMIT; i++))
-#			do
-#				SEARCHPATH=$SEARCHPATH/..
-#			done
-#		cd $SEARCHPATH
-#	fi
-#}
-
-# GLASSFISH ALIASES
-alias as_start="asadmin start-domain domain1"
-alias as_stop="asadmin stop-domain domain1"
-
-# START_TRUNK ALIASES
-alias start_post_local_4_4="start_trunc_instance -d cms -s localhost -a tomcat -w /Users/rmy/Dev/Workspace/Java/Enonic/cms-trunk/cms-webapp/target/cms-webapp-4.4.0-SNAPSHOT.war"
-alias start_post_local_4_3="start_trunc_instance -d cms4.3 -s localhost -a tomcat -w /Users/rmy/Dev/Workspace/Java/Enonic/cms-trunk/cms-webapp/target/cms-webapp-4.4.0-SNAPSHOT.war"
-alias start_packages_local="start_trunc_instance -d packages -s localhost -a tomcat -w /Users/rmy/Dev/Workspace/Java/Enonic/cms-trunk/cms-webapp/target/cms-webapp-4.4.0-SNAPSHOT.war"
-
-alias publishdir="python -m SimpleHTTPServer"
+alias sub="open /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl"
 alias pretty="python -mjson.tool"
+alias xp="$XP_DIST/modules/distro/target/install/bin/server.sh"
+
+up() {
+	LIMIT=$1
+
+	if [ -z "$LIMIT" ]; then
+		LIMIT=1
+	fi
+
+	SEARCHPATH=$PWD
+	
+	# If argument is not numeric, try match path
+	if ! [[ "$LIMIT" =~ ^[0-9]+$ ]] ; then
+	 	if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
+			echo "expression not found"
+		else
+			while [ true ]; do 
+				SEARCHPATH=$SEARCHPATH/..
+				cd $SEARCHPATH
+				if [[ ${PWD##*/} =~ ^.*$LIMIT.*$ ]]; then
+					break;
+				elif [[ -z ${PWD##*/} ]]; then
+					break;
+				fi 
+			done
+		fi
+	else 
+		# go n directories up
+		for ((i=1; i <= LIMIT; i++))
+			do
+				SEARCHPATH=$SEARCHPATH/..
+			done
+		cd $SEARCHPATH
+	fi
+}
 
 #  colors
 export CLICOLOR=true
@@ -272,37 +240,37 @@ shopt -s progcomp
 _set_intellij_context-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/tomcat_db_contexts)' $cur ) )
+    COMPREPLY=( $( compgen -W '$( ls ~/bin/configs/tomcat_db_contexts)' $cur ) )
 }
 
 _set_blobstore-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/blobstores)' $cur ) )
+    COMPREPLY=( $( compgen -W '$( ls ~/bin/configs/blobstores)' $cur ) )
 }
 
 _set_config-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/configs)' $cur ) )
+    COMPREPLY=( $( compgen -W '$( ls ~/bin/configs/configs)' $cur ) )
 }
 
 _set_plugin-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/plugins)' $cur ) )
+    COMPREPLY=( $( compgen -W '$( ls ~/bin/configs/plugins)' $cur ) )
 }
 
 _set_index-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/index)' $cur ) )
+    COMPREPLY=( $( compgen -W '$( ls ~/bin/configs/index)' $cur ) )
 }
 
 _set_resource-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $( compgen -W '$( ls /Users/rmy/bin/configs/resources)' $cur ) )
+    COMPREPLY=( $( compgen -W '$( ls ~/bin/configs/resources)' $cur ) )
 }
 
 _set_gitrepository-TC() {
@@ -346,14 +314,15 @@ complete -F _set_resource-TC 2set_resources.sh
 #	    PREV=$(pwd -P)
 #	fi
 #}
-#
+
+
 # GIT Aware prompt
 ########################
 
 # Detect whether the current directory is a git repository.
-#function is_git_repository {
-#  git branch > /dev/null 2>&1
-#}
+function is_git_repository {
+  git branch > /dev/null 2>&1
+}
 
 
 java7() {
@@ -363,63 +332,61 @@ java8() {
 export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 }
 
-#function set_git_branch {
-#  # Capture the output of the "git status" command.
-#  git_status="$(git status 2> /dev/null)"
-#
-#  # Set color based on clean/staged/dirty.
-#  if [[ ${git_status} =~ "working directory clean" ]]; then
-#	state="${BLUE}"
-#  elif [[ ${git_status} =~ "Changes to be committed" ]]; then
-#	state="${RED}"
-#	elif [[ ${git_status} =~ "no changes added to commit" ]]; then
-#	state="${YELLOW}"	
-#  else
-#	state="${RED}"
-#  fi
-#  
-#  # Set arrow icon based on status against remote.
-#  remote_pattern="# Your branch is (.*) of"
-#  if [[ ${git_status} =~ ${remote_pattern} ]]; then
-#		if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
-#			remote="↑"
-#    	else
-#			remote="↓"
-#    	fi
-# else
-#	remote=""
-# fi
-#
-#diverge_pattern="# Your branch and (.*) have diverged"
-#  if [[ ${git_status} =~ ${diverge_pattern} ]]; then
-#	remote="↕"
-#  fi
-#  
-#  # Get the name of the branch.
-#  branch_pattern="^# On branch ([^${IFS}]*)"
-#  if [[ ${git_status} =~ ${branch_pattern} ]]; then
-#	branch=${BASH_REMATCH[1]}
-#  fi
-#
-#  # Set the final branch string.
-#  BRANCH="${state}[${branch}]${remote}${COLOR_NONE} "
-#
-#}
+function set_git_branch {
+  # Capture the output of the "git status" command.
+  git_status="$(git status 2> /dev/null)"
 
-#function set_git_enabled_prompt () {
-#   
-#  # Set the BRANCH variable.
-#  if is_git_repository ; then
-#	set_git_branch
-#  else
-#	BRANCH=' '
-#  fi
-#  
-#  # Set the bash prompt variable.
-#  PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
-#}
-#
+  # Set color based on clean/staged/dirty.
+  if [[ ${git_status} =~ "working directory clean" ]]; then
+	state="${BLUE}"
+  elif [[ ${git_status} =~ "Changes to be committed" ]]; then
+	state="${RED}"
+	elif [[ ${git_status} =~ "no changes added to commit" ]]; then
+	state="${YELLOW}"	
+  else
+	state="${RED}"
+  fi
+  
+  # Set arrow icon based on status against remote.
+  remote_pattern="# Your branch is (.*) of"
+  if [[ ${git_status} =~ ${remote_pattern} ]]; then
+		if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
+			remote="↑"
+    	else
+			remote="↓"
+    	fi
+ else
+	remote=""
+ fi
 
+diverge_pattern="# Your branch and (.*) have diverged"
+  if [[ ${git_status} =~ ${diverge_pattern} ]]; then
+	remote="↕"
+  fi
+  
+  # Get the name of the branch.
+  branch_pattern="^On branch ([^${IFS}]*)"
+  if [[ ${git_status} =~ ${branch_pattern} ]]; then
+    branch=${BASH_REMATCH[1]}
+  fi
+
+  # Set the final branch string.
+  BRANCH="${state}[${branch}]${remote}${COLOR_NONE} "
+
+}
+
+function set_git_enabled_prompt () {
+   
+  # Set the BRANCH variable.
+  if is_git_repository ; then
+	set_git_branch
+  else
+	BRANCH=' '
+  fi
+  
+  # Set the bash prompt variable.
+  PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
+}
 
 PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]\$ "
 
@@ -446,10 +413,9 @@ function jps() {
 	command jps $ARGS | sed -e 's/-D/\'$'\n\t-D/g' | sed -e 's/-X/\'$'\n\t-X/g'
 }
 
-#export PROMPT_COMMAND="cd_set_tab; set_git_enabled_prompt; $PROMPT_COMMAND"
-export PROMPT_COMMAND="cd_set_tab; $PROMPT_COMMAND"
-
+export PROMPT_COMMAND="cd_set_tab; set_git_enabled_prompt; $PROMPT_COMMAND"
 
 # Bind prompt-commands
 #export PROMPT_COMMAND=" $PROMPT_COMMAND"
 #export PROMPT_COMMAND="_execute_dirrc; $PROMPT_COMMAND"
+
