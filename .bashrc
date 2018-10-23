@@ -20,34 +20,40 @@ shopt -s histappend
 #  builtin history "$@"
 #}
 
+# LOCALE
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 # ENV
-export WORKSPACE=~/Dev/Workspace
+export APP_WS=/Users/runarmyklebust/Dev/Workspace/apps
+export WORKSPACE=~/Dev
 export JAVA_WS=$WORKSPACE/Java
 export CATALINA_HOME=$APP_WS/tomcat
 export INTELLIJ_CATALINA=$APP_WS/tomcat
 export GRADLE_HOME=/opt/local/share/java/gradle/bin/gradle
-export GRADLE_OPTS="-Dorg.gradle.daemon=true"
+export GRADLE_OPTS="-Dorg.gradle.daemon=true -Xms512m -Xmx3G"
 export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 export MAVEN_OPTS="-Xmx1G -XX:MaxPermSize=512m"
 export DYLD_LIBRARY_PATH="/Applications/YourKit_Java_Profiler_12.0.5.app/bin/mac"
 
 # CMS Stuff
-export WORKSPACE_ENONIC="$WORKSPACE/Java/Enonic"
+export WORKSPACE_ENONIC="$WORKSPACE"
 export CMS_DIST=$WORKSPACE/CMS_DIST
 export TRUNK_PLUGINS="$WORKSPACE_ENONIC/plugins"
-export TRUNK_CE="$WORKSPACE_ENONIC/git/WEM"
-export TRUNK_BRANCH="$WORKSPACE_ENONIC/WEM"
+export TRUNK_CE="$WORKSPACE_ENONIC/git/xp"
+export TRUNK_BRANCH="$WORKSPACE_ENONIC/xp"
 export GIT_REPO="$WORKSPACE_ENONIC/git"
 export XP_HOME="/Users/runarmyklebust/Dev/Workspace/xp/home"
 export WEM_HOME="$XP_HOME"
-export XP_DIST="$GIT_REPO/WEM"
-
+export XP_DIST="$GIT_REPO/xp"
 
 # Java
 # export JAVA_OPTS="-Xbootclasspath/p:$CATALINA_HOME/lib/xalan-2.7.0.jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m"
+
 # Pathstuff
 #export PATH=/opt/subversion/bin:$PATH
 #export PATH=$APP_WS/maven/bin:$PATH
+export PATH=$JAVA_HOME/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=~/bin:$PATH
 export PATH=$CATALINA_HOME/bin:$PATH
@@ -56,13 +62,27 @@ export PATH=~/bin/dbtool:$PATH
 export PATH=/Users/runarmyklebust/Dev/Workspace/apps/android-sdk-macosx/tools:$PATH
 export PATH=/Users/runarmyklebust/Dev/Workspace/apps/android-sdk-macosx/platform-tools:$PATH
 
+# Google Cloud SDK
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/path.bash.inc' ]; then source '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/completion.bash.inc'; fi
+
+
+# GO
+export GO_WS="/Users/runarmyklebust/Dev/git/Go"
+export GOPATH=$GO_WS
+export PATH=$PATH:$GO_WS/bin
+export GO_ENONIC_HOME=$GO_WS/src/github.com/enonic
+
 #JMETER
 export PATH="/Users/runarmyklebust/Dev/Workspace/apps/jmeter/bin/":$PATH
 
 #Node js stuff
-export NODE_PATH="/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules"
-export PATH=/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules/.bin:$PATH
-export PATH=/usr/local/share/npm/bin:$PATH
+#export NODE_PATH="/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules"
+#export PATH=/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules/.bin:$PATH
+#export PATH=/usr/local/share/npm/bin:$PATH
 
 if [ $(type -t acoc) ];then
 	echo "Aliasing with acoc..."
@@ -115,16 +135,12 @@ fi
     }
 
 # Aliases
-alias ll="ls -la"
+alias ll="ls -laF"
 alias cc="cd $XP_HOME"
 alias ca="cd $APP_WS"
 alias sr="sudo su -"
 alias reload="colorString -c green sourcing .bashrc && source ~/.bashrc"
 alias psjava="ps -ef | grep java"
-alias ct="cd $TRUNK_CE"
-alias cex="cd /Users/runarmyklebust/Documents/Experience_18_4_2013"
-alias cb="cd $TRUNK4_4"
-alias cd44="cd $TRUNK4_4"
 alias tunnel_beast="ssh -L 54321:icarus:5432 rmy@beast.enonic.net"
 alias tunnel_shadowcat="ssh -L 54321:shadowcat.enonic.net:5432 rmy@beast.enonic.net"
 alias editBashrc="vi ~/.bashrc;reload"
@@ -132,7 +148,17 @@ alias conf="cd ~/bin/configs"
 alias cp="cp -R"
 alias sub="open /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl"
 alias pretty="python -mjson.tool"
-alias xp="$XP_DIST/modules/distro/target/install/bin/server.sh"
+#alias xp="$XP_DIST/modules/distro/build/install/bin/server.sh"
+alias xp="$XP_DIST/modules/runtime/build/install/bin/server.sh"
+alias cdoc="cd $APP_WS/docker"
+alias dc="docker-compose"
+
+# App shortcuts
+alias k="kubectl"
+
+EC_CLOUD_HOME="$GIT_REPO/ec-cloud"
+alias cgp="cd $EC_CLOUD_HOME/env-ec-prod"
+alias cgg="cd $GO_ENONIC_HOME"
 
 up() {
 	LIMIT=$1
@@ -142,23 +168,23 @@ up() {
 	fi
 
 	SEARCHPATH=$PWD
-	
+
 	# If argument is not numeric, try match path
 	if ! [[ "$LIMIT" =~ ^[0-9]+$ ]] ; then
 	 	if ! [[ "$SEARCHPATH" =~ ^.*$LIMIT.*$ ]] ; then
 			echo "expression not found"
 		else
-			while [ true ]; do 
+			while [ true ]; do
 				SEARCHPATH=$SEARCHPATH/..
 				cd $SEARCHPATH
 				if [[ ${PWD##*/} =~ ^.*$LIMIT.*$ ]]; then
 					break;
 				elif [[ -z ${PWD##*/} ]]; then
 					break;
-				fi 
+				fi
 			done
 		fi
-	else 
+	else
 		# go n directories up
 		for ((i=1; i <= LIMIT; i++))
 			do
@@ -183,11 +209,11 @@ LIGHT_GREEN="\[\033[1;32m\]"
  LIGHT_GRAY="\[\033[0;37m\]"
  COLOR_NONE="\[\e[0m\]"
 
-# Override cd to check for localevn. 
+# Override cd to check for localevn.
 # Is exists, source it => Use this to create separate env for different dirs, e.g CVS_ROOT, JAVA_HOME etc
 cd() {
   builtin cd "$@"
-  [ -f localenv ] && colorString setting localenv.. && source localenv
+  [ -f localenv ] && echo "setting localenv.." && source localenv
 }
 
 # Function to quick cd to git repositories, uses _set_gitrepository-TC
@@ -237,6 +263,12 @@ alias go_vtnode3="ssh root@vtnode3"
 shopt -s progcomp
 
 #Functions
+
+gradle() {
+	date "+Build started: %Y-%m-%d %H:%M:%S"
+	command gradle $@
+}
+
 _set_intellij_context-TC() {
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
@@ -315,6 +347,21 @@ complete -F _set_resource-TC 2set_resources.sh
 #	fi
 #}
 
+# PSMON
+#############
+
+function psmon {
+
+  if [ $# -eq 0 ]
+    then
+      echo "PID must be provided"
+      exit 1
+  fi
+
+  echo "Monitor pid: $1"
+  while true; do ps -p $1 -o pid,rss,vsz,%mem,%cpu,comm | awk '{$2=int($2/1024)"M";}{ print;}';sleep 4; done
+}
+
 
 # GIT Aware prompt
 ########################
@@ -337,16 +384,16 @@ function set_git_branch {
   git_status="$(git status 2> /dev/null)"
 
   # Set color based on clean/staged/dirty.
-  if [[ ${git_status} =~ "working directory clean" ]]; then
+  if [[ ${git_status} =~ "working tree clean" ]]; then
 	state="${BLUE}"
   elif [[ ${git_status} =~ "Changes to be committed" ]]; then
 	state="${RED}"
 	elif [[ ${git_status} =~ "no changes added to commit" ]]; then
-	state="${YELLOW}"	
+	state="${YELLOW}"
   else
 	state="${RED}"
   fi
-  
+
   # Set arrow icon based on status against remote.
   remote_pattern="# Your branch is (.*) of"
   if [[ ${git_status} =~ ${remote_pattern} ]]; then
@@ -363,7 +410,7 @@ diverge_pattern="# Your branch and (.*) have diverged"
   if [[ ${git_status} =~ ${diverge_pattern} ]]; then
 	remote="↕"
   fi
-  
+
   # Get the name of the branch.
   branch_pattern="^On branch ([^${IFS}]*)"
   if [[ ${git_status} =~ ${branch_pattern} ]]; then
@@ -375,20 +422,23 @@ diverge_pattern="# Your branch and (.*) have diverged"
 
 }
 
+BASE_PS="\[$(tput bold)\]\[\033[38;5;22m\]\w\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\]\[$(tput sgr0)\]"
+BASE_PS_POST="\[$(tput bold)\]\[$(tput sgr0)\]\[\033[38;5;0m\]\\$\[$(tput sgr0)\] "
+
 function set_git_enabled_prompt () {
-   
+
   # Set the BRANCH variable.
   if is_git_repository ; then
 	set_git_branch
   else
 	BRANCH=' '
   fi
-  
+
   # Set the bash prompt variable.
-  PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]${BRANCH}\$ "
+  PS1="${BASE_PS}${BRANCH}${BASE_PS_POST}"
 }
 
-PS1="\[\e[$((32-${?}))m\]\w\[\e[0m\]\$ "
+PS1="${BASE_PS}${BASE_PS_POST}"
 
 function tabname {
   printf "\e]1;$1\a"
@@ -419,3 +469,14 @@ export PROMPT_COMMAND="cd_set_tab; set_git_enabled_prompt; $PROMPT_COMMAND"
 #export PROMPT_COMMAND=" $PROMPT_COMMAND"
 #export PROMPT_COMMAND="_execute_dirrc; $PROMPT_COMMAND"
 
+
+function readMan() {
+ tr -d '\r\n[:space:]' < $1 | sed -e $'s/,/\\\n/g' |  sed -e $'s/Export-Package/\\\n\\\n###### Export-Package ####### \\\n/g' | sed -e $'s/Import-Package/\\\n\\\n###### Import-Package ####### \\\n/g'
+}
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/runarmyklebust/.sdkman"
+[[ -s "/Users/runarmyklebust/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/runarmyklebust/.sdkman/bin/sdkman-init.sh"
