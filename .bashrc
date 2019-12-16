@@ -25,59 +25,42 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # ENV
-export APP_WS=/Users/runarmyklebust/Dev/Workspace/apps
 export WORKSPACE=~/Dev
-export JAVA_WS=$WORKSPACE/Java
-export CATALINA_HOME=$APP_WS/tomcat
-export INTELLIJ_CATALINA=$APP_WS/tomcat
 export GRADLE_HOME=/opt/local/share/java/gradle/bin/gradle
+export APP_WS="$WORKSPACE/apps"
 export GRADLE_OPTS="-Dorg.gradle.daemon=true -Xms512m -Xmx3G"
 export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 export MAVEN_OPTS="-Xmx1G -XX:MaxPermSize=512m"
 export DYLD_LIBRARY_PATH="/Applications/YourKit_Java_Profiler_12.0.5.app/bin/mac"
 
-# CMS Stuff
+# XP Stuff
 export WORKSPACE_ENONIC="$WORKSPACE"
-export CMS_DIST=$WORKSPACE/CMS_DIST
-export TRUNK_PLUGINS="$WORKSPACE_ENONIC/plugins"
-export TRUNK_CE="$WORKSPACE_ENONIC/git/xp"
-export TRUNK_BRANCH="$WORKSPACE_ENONIC/xp"
 export GIT_REPO="$WORKSPACE_ENONIC/git"
-export XP_HOME="/Users/runarmyklebust/Dev/Workspace/xp/home"
-export WEM_HOME="$XP_HOME"
-export XP_DIST="$GIT_REPO/xp"
+export XP_HOME="$WORKSPACE_ENONIC/xp/home"
+export XP_DIST="$WORKSPACE_ENONIC/xp"
+export XP_DEV="$GIT_REPO/xp"
 
 # Java
 # export JAVA_OPTS="-Xbootclasspath/p:$CATALINA_HOME/lib/xalan-2.7.0.jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m"
 
 # Pathstuff
-#export PATH=/opt/subversion/bin:$PATH
-#export PATH=$APP_WS/maven/bin:$PATH
 export PATH=$JAVA_HOME/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=~/bin:$PATH
-export PATH=$CATALINA_HOME/bin:$PATH
-export PATH=$GROOVY_HOME/bin:$PATH
-export PATH=~/bin/dbtool:$PATH
-export PATH=/Users/runarmyklebust/Dev/Workspace/apps/android-sdk-macosx/tools:$PATH
-export PATH=/Users/runarmyklebust/Dev/Workspace/apps/android-sdk-macosx/platform-tools:$PATH
+export PATH=$APP_WS/bin:$PATH
 
 # Google Cloud SDK
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/path.bash.inc' ]; then source '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/path.bash.inc'; fi
+if [ -f '/Users/rmy/Dev/apps/google-cloud-sdk/path.bash.inc' ]; then . '/Users/rmy/Dev/apps/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/runarmyklebust/Dev/git/ec-cloud/kubernetes/GCP/google-cloud-sdk/completion.bash.inc'; fi
-
+if [ -f '/Users/rmy/Dev/apps/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/rmy/Dev/apps/google-cloud-sdk/completion.bash.inc'; fi
 
 # GO
-export GO_WS="/Users/runarmyklebust/Dev/git/Go"
+export GO_WS="/Users/rmy/Dev/git/Go"
 export GOPATH=$GO_WS
 export PATH=$PATH:$GO_WS/bin
 export GO_ENONIC_HOME=$GO_WS/src/github.com/enonic
-
-#JMETER
-export PATH="/Users/runarmyklebust/Dev/Workspace/apps/jmeter/bin/":$PATH
 
 #Node js stuff
 #export NODE_PATH="/Users/runarmyklebust/Dev/Workspace/Java/Enonic/git/nodeJsProject/node_modules"
@@ -140,24 +123,25 @@ alias cc="cd $XP_HOME"
 alias ca="cd $APP_WS"
 alias sr="sudo su -"
 alias reload="colorString -c green sourcing .bashrc && source ~/.bashrc"
-alias psjava="ps -ef | grep java"
-alias tunnel_beast="ssh -L 54321:icarus:5432 rmy@beast.enonic.net"
-alias tunnel_shadowcat="ssh -L 54321:shadowcat.enonic.net:5432 rmy@beast.enonic.net"
+alias psjava="ps -ef | grep java
 alias editBashrc="vi ~/.bashrc;reload"
 alias conf="cd ~/bin/configs"
 alias cp="cp -R"
 alias sub="open /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl"
 alias pretty="python -mjson.tool"
-#alias xp="$XP_DIST/modules/distro/build/install/bin/server.sh"
-alias xp="$XP_DIST/modules/runtime/build/install/bin/server.sh"
+alias xp="$XP_DEV/modules/runtime/build/install/bin/server.sh"
+#alias xp="/Users/rmy/Dev/xp/bin/server.sh"
 alias cdoc="cd $APP_WS/docker"
 alias dc="docker-compose"
+
+alias cal="gcal -K"
 
 # App shortcuts
 alias k="kubectl"
 
 EC_CLOUD_HOME="$GIT_REPO/ec-cloud"
 alias cgp="cd $EC_CLOUD_HOME/env-ec-prod"
+alias cgd="cd $EC_CLOUD_HOME/env-ec-dev"
 alias cgg="cd $GO_ENONIC_HOME"
 
 up() {
@@ -334,6 +318,18 @@ complete -F _set_plugin-TC 2set_plugins.sh
 complete -F _set_index-TC 2set_index.sh
 complete -F _set_resource-TC 2set_resources.sh
 
+
+
+java7() {
+export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+}
+java8() {
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+}
+java11() {
+export JAVA_HOME=`/usr/libexec/java_home -v11`
+}
+
 # PROMPT STUFF
 ########################
 
@@ -369,14 +365,6 @@ function psmon {
 # Detect whether the current directory is a git repository.
 function is_git_repository {
   git branch > /dev/null 2>&1
-}
-
-
-java7() {
-export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
-}
-java8() {
-export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 }
 
 function set_git_branch {
